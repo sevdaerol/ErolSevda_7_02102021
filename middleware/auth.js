@@ -19,12 +19,12 @@ module.exports = (req, res, next) => {
             if(results){
                 console.log(req.method)
                 const token = req.body.token;
-                const tokenDecoded = jwt.verify(token, '')
-                const moderationUserId = tokenDecoded.userId+'';
+                const tokenDecoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET')
+                const isAdminUserId = tokenDecoded.userId+'RANDOM_TOKEN_SECRET';  // userId = front => vue storage
                 console.log(tokenDecoded.userId, "TEST TOKEN")
                 const userId = decodedToken.userId;
                 const messageId = results[0].user_id;
-                if((tokenDecoded.userId === messageId && req.body.user_id === tokenDecoded.userId )||(moderationUserId && moderationUserId.split("/")[1] == "moderation")) { 
+                if((tokenDecoded.userId === messageId && req.body.user_id === tokenDecoded.userId )||(isAdminUserId && isAdminUserId.split("/")[1] == "isAdmin")) { 
                     next();
                 } 
                 else
@@ -37,8 +37,8 @@ module.exports = (req, res, next) => {
     if(req.method == "POST"){
         console.log(req.method)
         const token = req.body.token;
-        const tokenDecoded = jwt.verify(token, '')
-        const moderationUserId = tokenDecoded.userId;
+        const tokenDecoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET')
+        const isAdminUserId = tokenDecoded.userId;
         const userId = tokenDecoded.userId;
         console.log(req.body.user_id, tokenDecoded.userId)
         if(req.body.user_id !== tokenDecoded.userId) {

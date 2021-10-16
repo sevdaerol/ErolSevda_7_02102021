@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); //app express
 const bodyParser = require('body-parser');
 const helmet = require("helmet"); //securiser express avec helmet
 
@@ -27,5 +27,4 @@ app.use((req, res) => {
 });
 
 module.exports = app;
-
 //terminer
