@@ -14,8 +14,7 @@ const connection = mysql.createConnection({
 exports.signUp = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //crypter, hacher et saler le mdp 10 fois
     .then(hash => {
-        connection.query("INSERT INTO user VALUES (NULL,'"+req.body.username+"','"+ req.body.email +"','"+ hash +"', 0);"    
-        ,function(error, results, fields){
+        connection.query("INSERT INTO user VALUES (NULL,'"+req.body.username+"','"+ req.body.email +"','"+ hash +"', 0);",function(error, results, fields){
             if(error){
                 console.log(error);
                 res.status(400).json({error});
@@ -24,7 +23,7 @@ exports.signUp = (req, res, next) => {
             if(results){
                 next();
             };
-        });        
+        });
     })
     .catch(error => res.status(502).json({ error }));
 };
@@ -38,7 +37,7 @@ exports.getUserId = (req, res, next) => {
         if(results){
             console.log("test pour trouver id")
             const token = jwt.sign(  //generer un nvx token
-                {userId: results[0].user_id},
+                {userId: results[0].user_id}, //user_id = id de user dans message
                 'RANDOM_TOKEN_SECRET', //random token
                 {expiresIn: "96h"}
             );
@@ -113,10 +112,10 @@ exports.login = (req, res, next) => {
                 next();
             })
             .catch(error => res.status(500).json({error}));
-            
+
         };
     });
-} 
+}
 
 //fonction pour supprimer message + compte
 exports.deleteUser = (req, res, next) => {

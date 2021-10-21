@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 app.use('/api/user', userRoutes); //utiliser les routes dans notre app
 app.use('/api/message', messageRoutes); 
-
+//requete testcd
 app.use((req, res) => {
     res.json({ message: 'requête reçue !' }); 
 });
