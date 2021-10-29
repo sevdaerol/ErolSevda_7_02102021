@@ -9,25 +9,37 @@ const connection = mysql.createConnection({
   insercureAuth: true
 });
 
+connection.connect(function(err) {
+    if (err) {
+      console.error('error connecting: ' + err.stack);
+      return;
+    };
+});
+console.log("Connexion a Mysql");
+
+
 exports.start =  (req, res, next) => {
+
+    next();
+};
     //lancer la connection mysql
-    connection.connect ((err) => { //se connecter
+    /*connection.connect ((err) => { //se connecter
         if (err) {
         console.log ('Erreur de connexion à Mysql');
         }else {
             console.log ('Connexion à Mysql');
-            
+
             //recuperer le contenue = donnees de la table user
             connection.query ('SELECT * FROM user', (err, lignes) => {
                 if (err) throw err;
-            
+
                 console.log ('Données reçues de user:');
                 console.log (lignes);
             });
             //recuperer donnees de la table message
             connection.query ('SELECT * FROM message', (err, lignes) => {
                 if (err) throw err;
-            
+
                 console.log ('Données reçues de message:');
                 console.log (lignes);
             });
@@ -40,8 +52,8 @@ exports.start =  (req, res, next) => {
             // ...
             });
         }
-    });
-};
+    });*/
+
 
 exports.end =  (req, res, next) => {
     connection.end();//terminer la connection

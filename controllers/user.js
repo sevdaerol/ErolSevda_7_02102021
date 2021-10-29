@@ -14,18 +14,27 @@ const connection = mysql.createConnection({
 exports.signUp = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //crypter, hacher et saler le mdp 10 fois
     .then(hash => {
-        connection.query("INSERT INTO user VALUES (NULL,'"+req.body.username+"','"+ req.body.email +"','"+ hash +"', 0);",function(error, results, fields){
+        console.log(req.body.password);
+        marequete = "INSERT INTO user VALUES (NULL,'"+req.body.email+"','"+ req.body.username +"','"+ hash +"', 0);";
+        console.log("create user: " + marequete);
+        connection.query( marequete
+         ,function(error, results, fields){
             if(error){
                 console.log(error);
                 res.status(400).json({error});
                 next();
             };
             if(results){
+                console.log("user creer!");
                 next();
             };
         });
     })
-    .catch(error => res.status(502).json({ error }));
+    //.catch(error => res.status(502).json({ error }));
+    .catch(error => {
+        console.log("test" , error);
+        res.status(502).json({error });
+   });
 };
 
 //fonction pour recuperer id lutilisateur
@@ -119,20 +128,26 @@ exports.login = (req, res, next) => {
 
 //fonction pour supprimer message + compte
 exports.deleteUser = (req, res, next) => {
-    connection.query('DELETE FROM message WHERE user_id='+req.params.id+';',function(error, results, fields){
+    connection.query("DELETE FROM message WHERE user_id='"+req.params.id+"';",function(error, results, fields){
         if(error){
         };
         if(results){
             return 1
         };
     });
-    connection.query('DELETE FROM user WHERE id='+req.params.id+';',function(error, results, fields){
+    console.log("entrer delete user: " + req.body);
+    deletedUser = "DELETE FROM user WHERE id='"+req.params.id+"';";
+    console.log("deleted user: " + deletedUser);
+    connection.query(deletedUser, function(error, results, fields){
         if(error){
+            console.log("compte non supprime: " + error)
             res.status(400).json({error});
-            next();
+            return;
+            //next();
         };
         if(results){
-            res.status(200).json({message: 'Compte supprimer!'});
+            res.status(200).json({message: 'Compte supprimée!'});
+            console.log("compte supprimée!");
             next();
         };
     });

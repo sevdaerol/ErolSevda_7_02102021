@@ -9,16 +9,22 @@ const connection = mysql.createConnection({
 
 //recuperer tout les messages = contenue posts => AS = alias pour creer tableau d'ensemble de tout le contenue => message_id
 exports.getAllMessage = (req, res, next) =>{
-    connection.query('SELECT *, message.id AS message_id FROM message INNER JOIN user ON message.user_id = user.id;', function(error, results, fields){
+    console.log("entrer dans recupererMessage: " + req.body);
+    larequete = "SELECT *, message.id AS message_id FROM message INNER JOIN user ON message.user_id = user.id;";
+    console.log("recuperer message: " + larequete);
+    connection.query(larequete
+        ,function(error, results, fields){
         if(error){
+            console.log("erreur du contenue du req!");
             res.status(400).json({error});
         };
         if(results){
             res.status(200).json(results);
+            console.log("Resultats du getallmessage: " + results[1]["title"]);
         };
     });
 }
-
+//
 //recuperer message par id
 exports.getMessageById = (req, res, next) => {
     connection.query("SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id="+req.params.id+";",function(error, results, fields){
@@ -26,20 +32,23 @@ exports.getMessageById = (req, res, next) => {
             res.status(400).json({error});
         };
         if(results){
-            res.status(200).json(results);         
+            res.status(200).json(results);
         };
     });
 };
 
 //creer un message
 exports.createMessage = (req, res, next) => {
-    console.log(req.body);
-    connection.query('INSERT INTO message '+
-                    'VALUES (NULL,'+req.body.user_id+',"'+req.body.title+'","'+req.body.content+'");'
+    console.log("entrer dans createMessage: " + req.body);
+    marequete = "INSERT INTO message VALUES (NULL,'"+req.body.user_id+"','"+req.body.title+"','"+req.body.content+"', NOW());";
+    console.log("create message: " + marequete);
+    connection.query( marequete
     ,function(error, results, fields){
         if(error){
+            console.log("erreur du contenue du req!");
             res.status(400).json({error});
-            next();
+            //next();
+            return;
         };
         if(results){
             res.status(201).json({content: "Nouveau message crée!"});
@@ -51,7 +60,7 @@ exports.createMessage = (req, res, next) => {
 //modifier un message
 exports.modifyMessage = (req, res, next) => {
     connection.query('UPDATE message'+
-                    ' SET content="'+req.body.content+'", WHERE id='+req.params.id+';'
+                    ' SET content="'+req.body.content+'", datetime=NOW() WHERE id='+req.params.id+';'
     ,function(error, results, fields){
         if(error){
             res.status(400).json({error});
