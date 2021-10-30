@@ -11,4 +11,3 @@ router.post('/login', userControllers.login);
 router.delete('/delete/:id', userControllers.deleteUser,);
 
 module.exports = router;
-//terminer

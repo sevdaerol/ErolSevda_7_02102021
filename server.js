@@ -4,7 +4,7 @@ const app = require('./app');
 //creer le serveur
 const normalizePort = val => { //renvoyer un port valide
     const port = parseInt(val, 10);
-  
+
     if (isNaN(port)) {
       return val;
     }
@@ -13,9 +13,9 @@ const normalizePort = val => { //renvoyer un port valide
     }
     return false;
   };
-  const port = normalizePort(process.env.PORT || '3000');
+  const port = normalizePort(process.env.PORT || '3000');
   app.set('port', port);
-  
+
   const errorHandler = error => { //enregistrer les differents err dans le serveur
     if (error.syscall !== 'listen') {
       throw error;
@@ -35,20 +35,14 @@ const normalizePort = val => { //renvoyer un port valide
         throw error;
     }
   };
-  
+
   const server = http.createServer(app);
-  
+
   server.on('error', errorHandler);
   server.on('listening', () => {
     const address = server.address();
     const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
     console.log('Listening on ' + bind);
   });
-  
+
 server.listen(port);
-//terminer
-
-//app.set('port', process.env.PORT || 3000);
-//const server = http.createServer(app);
-
-//server.listen(process.env.PORT || 3000);

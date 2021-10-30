@@ -152,4 +152,3 @@ exports.deleteUser = (req, res, next) => {
         };
     });
 };
-//terminer

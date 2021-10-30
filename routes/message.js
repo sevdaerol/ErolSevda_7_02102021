@@ -14,4 +14,3 @@ router.put('/:id', auth, messageControllers.modifyMessage,);
 router.delete('/:id', auth, messageControllers.deleteMessage,);
 
 module.exports = router;
-//terminer

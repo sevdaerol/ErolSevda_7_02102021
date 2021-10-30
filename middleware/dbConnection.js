@@ -59,4 +59,3 @@ exports.end =  (req, res, next) => {
     connection.end();//terminer la connection
     console.log("Connexion terminer");
 };
-//terminer
