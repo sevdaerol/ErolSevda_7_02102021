@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const dbConnection = require('../middleware/dbConnection');//importer db
-const auth = require('../middleware/auth');
+const auth = require('../middleware/auth'); //authentifier les routes necessaires
 const messageControllers = require('../controllers/message');
 
 //coder les router

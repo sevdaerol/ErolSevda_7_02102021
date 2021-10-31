@@ -1,4 +1,3 @@
-//coder jwt pour isAdmin
 const jwt = require("jsonwebtoken");
 //se connecter a la bdd mysql
 const mysql = require('mysql');
@@ -12,11 +11,11 @@ const connection = mysql.createConnection({
 
 module.exports = (req, res, next) => {
     if(req.method == "DELETE" || req.method == "PUT"){
-        lareqmagique = "SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id="+req.params.id+";";
+        authMessage = "SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id="+req.params.id+";";
         //lareqmagique = "SELECT id FROM user WHERE user.id="+req.params.id+";";
         //lareqmagique = "SELECT * FROM user WHERE user.id="+req.params.id+";";
-        console.log("afficher lareqmagique:" + lareqmagique);
-        connection.query( lareqmagique ,function(error, results, fields){
+        console.log("afficher authMessage:" + authMessage);
+        connection.query( authMessage ,function(error, results, fields){
             if(error){
                 console.log(error);
             };

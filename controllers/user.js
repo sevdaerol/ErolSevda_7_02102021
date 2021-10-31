@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
     insercureAuth: true
 });
 
-//fonction pour s'enregistrer
+//s'enregistrer
 exports.signUp = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //crypter, hacher et saler le mdp 10 fois
     .then(hash => {
@@ -30,14 +30,13 @@ exports.signUp = (req, res, next) => {
             };
         });
     })
-    //.catch(error => res.status(502).json({ error }));
     .catch(error => {
         console.log("test" , error);
         res.status(502).json({error });
    });
 };
 
-//fonction pour recuperer id lutilisateur
+//recuperer l'id utilisateur
 exports.getUserId = (req, res, next) => {
     connection.query('SELECT id FROM user WHERE username="'+req.body.username+'";', function(error, results, fields){
         if (error) {
@@ -60,27 +59,27 @@ exports.getUserId = (req, res, next) => {
     })
 }
 
-//fonction pour se connecter
+//se connecter
 exports.login = (req, res, next) => {
     connection.query("SELECT * FROM user WHERE email='"+req.body.email+"';",function(error, results, fields){
         if(error){
             res.status(400).json({error: "Utilisateur non trouvé!"});
         };
         if(results){ //si email trouver dans bdd ..
-            if(results[0].password == undefined | results[0].email == undefined){ //si mdp nn definis
+            if(results[0].password == undefined | results[0].email == undefined){ //si password non definis
                 console.log("Utilisateur non trouvé!");
                 return res.status(401).json();
             }
-            bcrypt.compare(req.body.password, results[0].password) //si mdp trouver alors comparer avec le hash dans bdd
+            bcrypt.compare(req.body.password, results[0].password) //si password trouver alors comparer avec le hash dans bdd
             .then(valid => {
-                if(!valid) { //si mauvaise mdp err
+                if(!valid) { //si mauvaise password
                     return res.status(401).json({error: 'Mot de passe incorrect!'});
                 }
-                if(results[0].isAdmin == 0){ // si mdp saisie correct et non admin
+                if(results[0].isAdmin == 0){ // si password saisie correct et non admin
                     console.log(results[0].id)
-                    const token = jwt.sign( //signer un nvx token
+                    const token = jwt.sign(
                         {userId: results[0].id},
-                        'RANDOM_TOKEN_SECRET', //random token
+                        'RANDOM_TOKEN_SECRET',
                         {expiresIn: "96h"}
                     );
                     resObject = {
@@ -91,10 +90,10 @@ exports.login = (req, res, next) => {
                     res.status(202).json(resObject);
                     next();
                 }
-                if(results[0].isAdmin == 1){ //si msp saisie correct et admin
+                if(results[0].isAdmin == 1){ //si password saisie correct et admin
                     const isAdminId = results[0].id+"/isAdmin"
                     console.log(isAdminId)
-                    const token = jwt.sign( //signer un nvx token
+                    const token = jwt.sign( //signer un nouveau token
                         {userId: isAdminId},
                         'RANDOM_TOKEN_SECRET',
                         {expiresIn: "96h"}
@@ -107,12 +106,12 @@ exports.login = (req, res, next) => {
                     res.status(202).json(resObject);
                     next();
                 }
-                const token = jwt.sign(  //dans tout les cas generer un token
+                const token = jwt.sign(  //generer un token
                     {userId: results[0].id},
                     'RANDOM_TOKEN_SECRET',
                     {expiresIn: "96h"}
                 );
-                resObject = { //objet reponse
+                resObject = { //objet res
                     username: results[0].username,
                     userId: results[0].id,
                     token: token

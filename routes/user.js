@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const dbConnection = require('../middleware/dbConnection'); //importer db
-const auth = require('../middleware/auth'); //importer middleware auth
+const auth = require('../middleware/auth');
 const userControllers = require('../controllers/user');
 
 //coder les router
