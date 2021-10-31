@@ -9,8 +9,8 @@ const messageControllers = require('../controllers/message');
 router.get('/', messageControllers.getAllMessage);
 router.get('/:id', messageControllers.getMessageById,);
 router.get('/:id', messageControllers.getMessageUsername,);
-router.post('/', messageControllers.createMessage,);
-router.put('/:id', auth, messageControllers.modifyMessage,);
-router.delete('/:id', auth, messageControllers.deleteMessage,);
+router.post('/', auth, messageControllers.createMessage,);
+router.put('/:id', messageControllers.modifyMessage,);
+router.delete('/:id', messageControllers.deleteMessage,);
 
 module.exports = router;
