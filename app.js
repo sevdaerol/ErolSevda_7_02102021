@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-app.use('/api/user', userRoutes); //utiliser les routes dans notre app
+app.use('/api/user', userRoutes); //definir les routes qui vont etre utiliser dans le front!
 app.use('/api/message', messageRoutes);
 
 module.exports = app;

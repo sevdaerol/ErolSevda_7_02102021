@@ -36,7 +36,7 @@ const normalizePort = val => { //renvoyer un port valide
     }
   };
 
-  const server = http.createServer(app);
+  const server = http.createServer(app); //creer serveur
 
   server.on('error', errorHandler);
   server.on('listening', () => {

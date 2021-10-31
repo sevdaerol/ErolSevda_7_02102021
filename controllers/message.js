@@ -7,20 +7,20 @@ const connection = mysql.createConnection({
     insercureAuth: true
 });
 
-//recuperer tout les messages = contenue posts => AS = alias pour creer tableau d'ensemble de tout le contenue => message_id
+//recuperer tout les messages => AS = alias  => ici tout le contenue de la table message + message.id = message_id
 exports.getAllMessage = (req, res, next) =>{
-    console.log("entrer dans recupererMessage: " + req.body);
-    larequete = "SELECT *, message.id AS message_id FROM message INNER JOIN user ON message.user_id = user.id;";
-    console.log("recuperer message: " + larequete);
-    connection.query(larequete
+    //console.log("entrer dans recupererMessage: " + req.body);
+    allMessage = "SELECT *, message.id AS message_id FROM message INNER JOIN user ON message.user_id = user.id;";
+    //console.log("tout les messages: " + allMessage);
+    connection.query( allMessage
         ,function(error, results, fields){
         if(error){
-            console.log("erreur du contenue du req!");
+            console.log("erreur du contenue de la requete!" + error);
             res.status(400).json({error});
         };
         if(results){
             res.status(200).json(results);
-            console.log("Resultats du getallmessage: " + results[1]["title"]);
+            //console.log("Resultats du getallmessage: " + results[1]["title"]);  //exemple de console.log pour lire les donnees recu = > ici title
         };
     });
 }
@@ -37,18 +37,33 @@ exports.getMessageById = (req, res, next) => {
     });
 };
 
+//recuperer le nom d'utilisateur dans message
+exports.getMessageUsername = (req, res, next) => {
+    connection.query('SELECT username FROM user WHERE id='+req.params.id, function(error, results, fields){
+        if(error){
+            console.log(error);
+            res.status(401).json({content: "Utilisateur non trouvé!"});
+            next();
+        };
+        if(results){
+            res.status(202).json(results);
+            next();
+        }
+    });
+}
+
 //creer un message
 exports.createMessage = (req, res, next) => {
-    console.log("entrer dans createMessage: " + req.body);
-    marequete = "INSERT INTO message VALUES (NULL,'"+req.body.user_id+"','"+req.body.title+"','"+req.body.content+"', NOW());";
-    console.log("create message: " + marequete);
-    connection.query( marequete
+    //console.log("entrer dans createMessage: " + req.body);
+    newMessage = "INSERT INTO message VALUES (NULL,'"+req.body.user_id+"','"+req.body.title+"','"+req.body.content+"', NOW());";
+    //console.log("ma requete: " + newMessage);
+    connection.query( newMessage
     ,function(error, results, fields){
         if(error){
-            console.log("erreur du contenue du req!");
+            console.log("erreur du contenue de la requete!" + error);
             res.status(400).json({error});
             //next();
-            return;
+            return; // utiliser return et non next() pour eviter les "err_http_headers_sent" = quand le serveur envoi plus d'un response au front
         };
         if(results){
             res.status(201).json({content: "Nouveau message crée!"});
@@ -84,18 +99,3 @@ exports.deleteMessage = (req, res, next) => {
         };
     });
 };
-
-//recuperer le nom d'utilisateur dans message
-exports.getMessageUsername = (req, res, next) => {
-    connection.query('SELECT username FROM user WHERE id='+req.params.id, function(error, results, fields){
-        if(error){
-            console.log(error);
-            res.status(401).json({content: "Utilisateur non trouvé!"});
-            next();
-        };
-        if(results){
-            res.status(202).json(results);
-            next();
-        }
-    });
-}

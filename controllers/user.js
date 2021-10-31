@@ -14,10 +14,10 @@ const connection = mysql.createConnection({
 exports.signUp = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //crypter, hacher et saler le mdp 10 fois
     .then(hash => {
-        console.log(req.body.password);
-        marequete = "INSERT INTO user VALUES (NULL,'"+req.body.email+"','"+ req.body.username +"','"+ hash +"', 0);";
-        console.log("create user: " + marequete);
-        connection.query( marequete
+        //console.log(req.body.password);
+        signIn = "INSERT INTO user VALUES (NULL,'"+req.body.email+"','"+ req.body.username +"','"+ hash +"', 0);";
+        //console.log("create user: " + signIn);
+        connection.query( signIn
          ,function(error, results, fields){
             if(error){
                 console.log(error);
@@ -25,13 +25,13 @@ exports.signUp = (req, res, next) => {
                 next();
             };
             if(results){
-                console.log("user creer!");
+                //console.log("utilisateur créer!");
                 next();
             };
         });
     })
     .catch(error => {
-        console.log("test" , error);
+        console.log("Utilisateur non crée!" , error);
         res.status(502).json({error });
    });
 };
@@ -43,8 +43,8 @@ exports.getUserId = (req, res, next) => {
             res.status(402).json({error});
         };
         if(results){
-            console.log("test pour trouver id")
-            const token = jwt.sign(  //generer un nvx token
+            //console.log("test pour trouver user id")
+            const token = jwt.sign(  //generer un nouveaux token
                 {userId: results[0].user_id}, //user_id = id de user dans message
                 'RANDOM_TOKEN_SECRET', //random token
                 {expiresIn: "96h"}
@@ -65,17 +65,17 @@ exports.login = (req, res, next) => {
         if(error){
             res.status(400).json({error: "Utilisateur non trouvé!"});
         };
-        if(results){ //si email trouver dans bdd ..
-            if(results[0].password == undefined | results[0].email == undefined){ //si password non definis
+        if(results){ //si email trouver dans la bdd ..
+            if(results[0].password == undefined | results[0].email == undefined){ //si password ou email non definis..
                 console.log("Utilisateur non trouvé!");
                 return res.status(401).json();
             }
-            bcrypt.compare(req.body.password, results[0].password) //si password trouver alors comparer avec le hash dans bdd
+            bcrypt.compare(req.body.password, results[0].password) //si non comparer le password avec le hash dans la bdd..
             .then(valid => {
-                if(!valid) { //si mauvaise password
+                if(!valid) { //si password invalid..
                     return res.status(401).json({error: 'Mot de passe incorrect!'});
                 }
-                if(results[0].isAdmin == 0){ // si password saisie correct et non admin
+                if(results[0].isAdmin == 0){ // si isAdmin = 0
                     console.log(results[0].id)
                     const token = jwt.sign(
                         {userId: results[0].id},
@@ -90,7 +90,7 @@ exports.login = (req, res, next) => {
                     res.status(202).json(resObject);
                     next();
                 }
-                if(results[0].isAdmin == 1){ //si password saisie correct et admin
+                if(results[0].isAdmin == 1){ //si isAdmin = 1
                     const isAdminId = results[0].id+"/isAdmin"
                     console.log(isAdminId)
                     const token = jwt.sign( //signer un nouveau token
@@ -106,7 +106,7 @@ exports.login = (req, res, next) => {
                     res.status(202).json(resObject);
                     next();
                 }
-                const token = jwt.sign(  //generer un token
+                const token = jwt.sign(  //Dans tout les cas generer un nouveau token
                     {userId: results[0].id},
                     'RANDOM_TOKEN_SECRET',
                     {expiresIn: "96h"}
@@ -125,8 +125,9 @@ exports.login = (req, res, next) => {
     });
 }
 
-//fonction pour supprimer message + compte
+//supprimer message + compte
 exports.deleteUser = (req, res, next) => {
+    //console.log("entrer deleteUser: " + req.body);
     connection.query("DELETE FROM message WHERE user_id='"+req.params.id+"';",function(error, results, fields){
         if(error){
         };
@@ -134,19 +135,18 @@ exports.deleteUser = (req, res, next) => {
             return 1
         };
     });
-    console.log("entrer delete user: " + req.body);
+
     deletedUser = "DELETE FROM user WHERE id='"+req.params.id+"';";
-    console.log("deleted user: " + deletedUser);
+    //console.log("deletedUser: " + deletedUser);
     connection.query(deletedUser, function(error, results, fields){
         if(error){
-            console.log("compte non supprime: " + error)
+            console.log("compte non supprimé!: " + error);
             res.status(400).json({error});
             return;
-            //next();
         };
         if(results){
             res.status(200).json({message: 'Compte supprimée!'});
-            console.log("compte supprimée!");
+            //console.log("compte supprimée!");
             next();
         };
     });
