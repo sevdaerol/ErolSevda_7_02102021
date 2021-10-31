@@ -50,11 +50,11 @@ module.exports = (req, res, next) => {
         console.log(req.method)
         const token = req.body.token;
         console.log("token: " + token);
-        const tokenDecoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET')
+        const tokenDecoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
         console.log("tokendecoded: " + tokenDecoded);
         const isAdminUserId = tokenDecoded.userId;
         const userId = tokenDecoded.userId;
-        console.log(req.body.user_id, tokenDecoded.userId)
+        console.log(req.body.user_id, tokenDecoded.userId);
         if(req.body.user_id !== tokenDecoded.userId) {
             res.status(401).json({error : "Utilisateur non authorisé!"})
             return;
