@@ -32,15 +32,15 @@ exports.signUp = (req, res, next) => {
     })
     .catch(error => {
         console.log("Utilisateur non crée!" , error);
-        res.status(502).json({error });
-   });
+        res.status(500).json({error });
+    });
 };
 
 //recuperer l'id utilisateur
 exports.getUserId = (req, res, next) => {
     connection.query('SELECT id FROM user WHERE username="'+req.body.username+'";', function(error, results, fields){
         if (error) {
-            res.status(402).json({error});
+            res.status(400).json({error});
         };
         if(results){
             //console.log("test pour trouver user id")
@@ -68,7 +68,7 @@ exports.login = (req, res, next) => {
         if(results){ //si email trouver dans la bdd ..
             if(results[0].password == undefined | results[0].email == undefined){ //si password ou email non definis..
                 console.log("Utilisateur non trouvé!");
-                return res.status(401).json();
+                return res.status(400).json();
             }
             bcrypt.compare(req.body.password, results[0].password) //si non comparer le password avec le hash dans la bdd..
             .then(valid => {
@@ -87,7 +87,7 @@ exports.login = (req, res, next) => {
                         userId: results[0].id,
                         token: token
                     };
-                    res.status(202).json(resObject);
+                    res.status(200).json(resObject);
                     next();
                 }
                 if(results[0].isAdmin == 1){ //si isAdmin = 1 //modifier manuellement la valeur isAdmin d'un  utilisateur a 1 dasn la bdd!
@@ -103,7 +103,7 @@ exports.login = (req, res, next) => {
                         userId: results[0].id,
                         token: token
                     };
-                    res.status(202).json(resObject);
+                    res.status(200).json(resObject);
                     next();
                 }
                 const token = jwt.sign(  //Dans tout les cas generer un nouveau token
@@ -116,11 +116,10 @@ exports.login = (req, res, next) => {
                     userId: results[0].id,
                     token: token
                 };
-                res.status(202).json(resObject);
+                res.status(200).json(resObject);
                 next();
             })
-            .catch(error => res.status(500).json({error}));
-
+            .catch(error => res.status(401).json({error}));
         };
     });
 }

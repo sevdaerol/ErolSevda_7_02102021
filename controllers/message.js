@@ -42,11 +42,11 @@ exports.getMessageUsername = (req, res, next) => {
     connection.query('SELECT username FROM user WHERE id='+req.params.id, function(error, results, fields){
         if(error){
             console.log(error);
-            res.status(401).json({content: "Utilisateur non trouvé!"});
+            res.status(400).json({content: "Utilisateur non trouvé!"});
             next();
         };
         if(results){
-            res.status(202).json(results);
+            res.status(200).json(results);
             next();
         }
     });
