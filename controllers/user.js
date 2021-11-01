@@ -76,7 +76,7 @@ exports.login = (req, res, next) => {
                     return res.status(401).json({error: 'Mot de passe incorrect!'});
                 }
                 if(results[0].isAdmin == 0){ // si isAdmin = 0
-                    console.log(results[0].id)
+                    console.log("isadmin:" + results[0].isAdmin);
                     const token = jwt.sign(
                         {userId: results[0].id},
                         'RANDOM_TOKEN_SECRET',
@@ -90,7 +90,7 @@ exports.login = (req, res, next) => {
                     res.status(202).json(resObject);
                     next();
                 }
-                if(results[0].isAdmin == 1){ //si isAdmin = 1
+                if(results[0].isAdmin == 1){ //si isAdmin = 1 //modifier manuellement la valeur isAdmin d'un  utilisateur a 1 dasn la bdd!
                     const isAdminId = results[0].id+"/isAdmin"
                     console.log(isAdminId)
                     const token = jwt.sign( //signer un nouveau token
