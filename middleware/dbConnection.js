@@ -17,13 +17,6 @@ connection.connect(function(err) {
 });
 console.log("Connexion a Mysql");
 
-//eviter attaques par injections SQL
-let userId = "login-password" + '1 OR 1 = 1'; //login-password = id du champs user password du formulaire login
-let sql = 'SELECT * FROM user WHERE id = ' + connection.escape(userId);
-connection.query(sql, function (error, results, fields) {
-if (error) throw error;
-});
-
 exports.start =  (req, res, next) => { //lancer la connexion
 
     next();

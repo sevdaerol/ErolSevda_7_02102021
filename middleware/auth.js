@@ -11,11 +11,11 @@ const connection = mysql.createConnection({
 
 module.exports = (req, res, next) => {
     if(req.method == "DELETE" || req.method == "PUT"){
-        authMessage = "SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id="+req.params.id+";";
+        //authMessage = "SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id="+req.params.id+";";
         //lareqmagique = "SELECT id FROM user WHERE user.id="+req.params.id+";"; //exemple pour authetifier les routes user
         //lareqmagique = "SELECT * FROM user WHERE user.id="+req.params.id+";";
         //console.log("afficher authMessage:" + authMessage);
-        connection.query( authMessage ,function(error, results, fields){
+        connection.query("SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id = "  + connection.escape(req.params.id), function(error, results, fields){
             if(error){
                 console.log(error);
             };

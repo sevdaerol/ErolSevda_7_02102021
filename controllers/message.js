@@ -7,13 +7,15 @@ const connection = mysql.createConnection({
     insercureAuth: true
 });
 
+//eviter attaques par injections SQL = connection.escape(req)
+
 //recuperer tout les messages => AS = alias  => ici tout le contenue de la table message + message.id = message_id
 exports.getAllMessage = (req, res, next) =>{
     //console.log("entrer dans recupererMessage: " + req.body);
     allMessage = "SELECT *, message.id AS message_id FROM message INNER JOIN user ON message.user_id = user.id;";
     //console.log("tout les messages: " + allMessage);
-    connection.query( allMessage
-        ,function(error, results, fields){
+    connection.query( allMessage,
+        function(error, results, fields){
         if(error){
             console.log("erreur du contenue de la requete!" + error);
             res.status(400).json({error});
@@ -27,7 +29,7 @@ exports.getAllMessage = (req, res, next) =>{
 //
 //recuperer message par id
 exports.getMessageById = (req, res, next) => {
-    connection.query("SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id="+req.params.id+";",function(error, results, fields){
+    connection.query("SELECT * FROM message INNER JOIN user ON message.user_id = user.id WHERE message.id = " + connection.escape(req.params.id), function(error, results, fields){
         if(error){
             res.status(400).json({error});
         };
@@ -39,7 +41,7 @@ exports.getMessageById = (req, res, next) => {
 
 //recuperer le nom d'utilisateur dans message
 exports.getMessageUsername = (req, res, next) => {
-    connection.query('SELECT username FROM user WHERE id='+req.params.id, function(error, results, fields){
+    connection.query('SELECT username FROM user WHERE id = ' + connection.escape(req.params.id), function(error, results, fields){
         if(error){
             console.log(error);
             res.status(400).json({content: "Utilisateur non trouvé!"});
@@ -55,7 +57,7 @@ exports.getMessageUsername = (req, res, next) => {
 //creer un message
 exports.createMessage = (req, res, next) => {
     //console.log("entrer dans createMessage: " + req.body);
-    newMessage = "INSERT INTO message VALUES (NULL,'"+req.body.user_id+"','"+req.body.title+"','"+req.body.content+"', NOW());";
+    newMessage = "INSERT INTO message VALUES (NULL, " + connection.escape(req.body.user_id) +", " + connection.escape(req.body.title) +", " + connection.escape(req.body.content) +", NOW());";
     //console.log("ma requete: " + newMessage);
     connection.query( newMessage
     ,function(error, results, fields){
@@ -74,8 +76,8 @@ exports.createMessage = (req, res, next) => {
 
 //modifier un message
 exports.modifyMessage = (req, res, next) => {
-    connection.query('UPDATE message'+
-                    ' SET content="'+req.body.content+'", datetime=NOW() WHERE id='+req.params.id+';'
+    let modify = 'UPDATE message'+' SET content= "'+ connection.escape(req.body.content) +'", datetime=NOW() WHERE id= ' + connection.escape(req.params.id) ;
+    connection.query( modify
     ,function(error, results, fields){
         if(error){
             res.status(400).json({error});
@@ -88,7 +90,7 @@ exports.modifyMessage = (req, res, next) => {
 
 //supprimer message
 exports.deleteMessage = (req, res, next) => {
-    connection.query("DELETE FROM message WHERE id="+req.params.id+";",function(error, results, fields){
+    connection.query("DELETE FROM message WHERE id = " + connection.escape(req.params.id), function(error, results, fields){
         if(error){
             res.status(400).json({error});
             next();

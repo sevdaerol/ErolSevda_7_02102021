@@ -15,10 +15,9 @@ exports.signUp = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //crypter, hacher et saler le mdp 10 fois
     .then(hash => {
         //console.log(req.body.password);
-        signIn = "INSERT INTO user VALUES (NULL,'"+req.body.email+"','"+ req.body.username +"','"+ hash +"', 0);";
+        signIn = "INSERT INTO user VALUES (NULL, " + connection.escape(req.body.email) +", " + connection.escape(req.body.username) +",'"+ hash +"', 0);";
         //console.log("create user: " + signIn);
-        connection.query( signIn
-         ,function(error, results, fields){
+        connection.query(signIn , function(error, results, fields){
             if(error){
                 console.log(error);
                 res.status(400).json({error});
@@ -38,7 +37,7 @@ exports.signUp = (req, res, next) => {
 
 //recuperer l'id utilisateur
 exports.getUserId = (req, res, next) => {
-    connection.query('SELECT id FROM user WHERE username="'+req.body.username+'";', function(error, results, fields){
+    connection.query('SELECT id FROM user WHERE username = ' + connection.escape(req.body.username), function(error, results, fields){
         if (error) {
             res.status(400).json({error});
         };
@@ -61,7 +60,7 @@ exports.getUserId = (req, res, next) => {
 
 //se connecter
 exports.login = (req, res, next) => {
-    connection.query("SELECT * FROM user WHERE email='"+req.body.email+"';",function(error, results, fields){
+    connection.query("SELECT * FROM user WHERE email = " + connection.escape(req.body.email), function(error, results, fields){
         if(error){
             res.status(400).json({error: "Utilisateur non trouvé!"});
         };
@@ -127,7 +126,7 @@ exports.login = (req, res, next) => {
 //supprimer message + compte
 exports.deleteUser = (req, res, next) => {
     //console.log("entrer deleteUser: " + req.body);
-    connection.query("DELETE FROM message WHERE user_id='"+req.params.id+"';",function(error, results, fields){
+    connection.query("DELETE FROM message WHERE user_id = " + connection.escape(req.params.id), function(error, results, fields){
         if(error){
         };
         if(results){
@@ -135,9 +134,9 @@ exports.deleteUser = (req, res, next) => {
         };
     });
 
-    deletedUser = "DELETE FROM user WHERE id='"+req.params.id+"';";
+    //deletedUser = "DELETE FROM user WHERE id='"+req.params.id+"';";
     //console.log("deletedUser: " + deletedUser);
-    connection.query(deletedUser, function(error, results, fields){
+    connection.query("DELETE FROM user WHERE id = " + connection.escape(req.params.id), function(error, results, fields){
         if(error){
             console.log("compte non supprimé!: " + error);
             res.status(400).json({error});
